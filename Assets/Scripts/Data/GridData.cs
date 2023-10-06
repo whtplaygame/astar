@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Data.Extension;
 using Graph;
+using Unity.VisualScripting;
 
 namespace Data
 {
@@ -33,6 +34,17 @@ namespace Data
                 }
 
                 CurrentGridData.Add(row);
+            }
+        }
+
+        public void AddObstacle(List<Location> locations)
+        {
+            foreach (var location in locations)
+            {
+                if (IsBound(location))
+                {
+                    CurrentGridData[location.x][location.y].NodeType = NodeType.Obstacle;
+                }
             }
         }
 
@@ -68,6 +80,24 @@ namespace Data
 
             if (aStarNode.Location.x < 0 || aStarNode.Location.y < 0 || aStarNode.Location.x >= gridWidth ||
                 aStarNode.Location.y >= gridHeight)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsBound(Location location)
+        {
+            var gridWidth = 0;
+            var gridHeight = 0;
+            gridHeight = CurrentGridData.Count;
+            if (gridHeight > 0)
+            {
+                gridWidth = CurrentGridData[0].Count;
+            }
+
+            if (location.x < 0 || location.y < 0 || location.x >= gridWidth || location.y >= gridHeight)
             {
                 return false;
             }
