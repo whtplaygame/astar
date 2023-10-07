@@ -8,6 +8,28 @@ namespace Data
 {
     public class GridData
     {
+        public static GridData Instance;
+
+        public static void Create()
+        {
+            Instance = new GridData();
+            Instance.Init();
+        }
+
+        private void Init()
+        {
+        }
+
+        public static void Destroy()
+        {
+            Instance.Release();
+            Instance = null;
+        }
+
+        private void Release()
+        {
+        }
+
         public List<List<AStarNode>> CurrentGridData;
 
         public Dictionary<AStarNode, AStarNode> CameFrom = new Dictionary<AStarNode, AStarNode>();
@@ -165,7 +187,9 @@ namespace Data
                     break;
                 }
 
-                foreach (var next in Neighbors(current))
+                var neighbors = Neighbors(current);
+
+                foreach (var next in neighbors)
                 {
                     double newCost = CostSoFar[current] + 1; //Cost(current, next);
                     if (!CostSoFar.ContainsKey(next) || newCost < CostSoFar[next])
