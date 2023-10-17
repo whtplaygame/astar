@@ -165,7 +165,7 @@ namespace Data
             return neighbors;
         }
 
-        static public double Heuristic(Location a, Location b)
+        public static double Heuristic(Location a, Location b)
         {
             return Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
         }
@@ -201,6 +201,21 @@ namespace Data
                     }
                 }
             }
+        }
+        
+        
+        //-------------------------------------------------------------------------------
+        //处理棋盘数据修改
+        //-------------------------------------------------------------------------------
+
+        public void SetDataType(Location location,NodeType type)
+        {
+            if (!IsBound(location))
+            {
+                return;
+            }
+            
+            CurrentGridData[location.x][location.y].NodeType = type;
         }
     }
 }

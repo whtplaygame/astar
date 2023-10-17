@@ -40,6 +40,9 @@ namespace Graph
     {
         None,
         Normal,
+        Start,
+        End,
         Obstacle,
+        Length,
     }
 }

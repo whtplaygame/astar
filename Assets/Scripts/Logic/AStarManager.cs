@@ -1,21 +1,26 @@
 using System.Collections.Generic;
 using Data;
 using UnityEngine;
+using UnityEngine.UI;
+using View;
 
 namespace Logic
 {
     public class AStarManager : MonoBehaviour
     {
+        [SerializeField] private Transform _root;
+        [SerializeField] private Button _findPathBtn;
         private void Awake()
         {
-            GridData data = new GridData();
-            data.CreateGrid(10, 10);
-            data.AStarPathFind(data.CurrentGridData[0][0], data.CurrentGridData[4][4]);
-            Debug.Log($"{data.CameFrom.Count}");
-            foreach (var node in data.CameFrom)
-            {
-                Debug.Log($"{node.Value.Location.x}   {node.Value.Location.y}");
-            }
+            _findPathBtn.onClick.AddListener(PathFinder);
+            GridData.Create();
+            GridData.Instance.CreateGrid(10, 10);
+            GridView.Instance.LoadGrid(_root);
+        }
+
+        private void PathFinder()
+        {
+            
         }
     }
 }
