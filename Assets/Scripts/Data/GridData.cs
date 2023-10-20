@@ -30,10 +30,38 @@ namespace Data
         {
         }
 
-        public List<List<AStarNode>> CurrentGridData;
-
+        public AStarNode[][] CurrentGridData;
         public Dictionary<AStarNode, AStarNode> CameFrom = new Dictionary<AStarNode, AStarNode>();
         public Dictionary<AStarNode, double> CostSoFar = new Dictionary<AStarNode, double>();
+
+        public Location StartLocation;
+        public Location EndLocation;
+
+        public AStarNode StartNode
+        {
+            get
+            {
+                if (CheckNodeIsLegalById(StartLocation))
+                {
+                    return CurrentGridData[StartLocation.x][StartLocation.y];
+                }
+
+                return CurrentGridData[0][0];
+            }
+        }
+
+        public AStarNode EndNode
+        {
+            get
+            {
+                if (CheckNodeIsLegalById(EndLocation))
+                {
+                    return CurrentGridData[EndLocation.x][EndLocation.y];
+                }
+
+                return CurrentGridData[0][0];
+            }
+        }
 
         public static readonly Location[] DIRS = new[]
         {
@@ -45,17 +73,17 @@ namespace Data
 
         public void CreateGrid(int width, int height)
         {
-            CurrentGridData = new List<List<AStarNode>>(height);
+            CurrentGridData = new AStarNode[height][];
             for (var i = 0; i < height; i++)
             {
-                var row = new List<AStarNode>(width);
+                var row = new AStarNode[width];
                 for (var j = 0; j < width; j++)
                 {
                     AStarNode aStarNode = new AStarNode(new Location(i, j), NodeType.Normal, 1f);
-                    row.Add(aStarNode);
+                    row[j] = aStarNode;
                 }
 
-                CurrentGridData.Add(row);
+                CurrentGridData[i] = row;
             }
         }
 
@@ -94,10 +122,10 @@ namespace Data
 
             var gridWidth = 0;
             var gridHeight = 0;
-            gridHeight = CurrentGridData.Count;
+            gridHeight = CurrentGridData.Length;
             if (gridHeight > 0)
             {
-                gridWidth = CurrentGridData[0].Count;
+                gridWidth = CurrentGridData[0].Length;
             }
 
             if (aStarNode.Location.x < 0 || aStarNode.Location.y < 0 || aStarNode.Location.x >= gridWidth ||
@@ -113,10 +141,10 @@ namespace Data
         {
             var gridWidth = 0;
             var gridHeight = 0;
-            gridHeight = CurrentGridData.Count;
+            gridHeight = CurrentGridData.Length;
             if (gridHeight > 0)
             {
-                gridWidth = CurrentGridData[0].Count;
+                gridWidth = CurrentGridData[0].Length;
             }
 
             if (location.x < 0 || location.y < 0 || location.x >= gridWidth || location.y >= gridHeight)
@@ -131,10 +159,10 @@ namespace Data
         {
             var gridWidth = 0;
             var gridHeight = 0;
-            gridHeight = CurrentGridData.Count;
+            gridHeight = CurrentGridData.Length;
             if (gridHeight > 0)
             {
-                gridWidth = CurrentGridData[0].Count;
+                gridWidth = CurrentGridData[0].Length;
             }
 
             if (location.x < 0 || location.y < 0 || location.x >= gridWidth || location.y >= gridHeight)
@@ -170,19 +198,19 @@ namespace Data
             return Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
         }
 
-        public void AStarPathFind(AStarNode start, AStarNode end)
+        public void AStarPathFind()
         {
             var priorityQueue = new PriorityQueue<AStarNode, double>();
-            priorityQueue.Enqueue(start, 0);
+            priorityQueue.Enqueue(StartNode, 0);
 
-            CameFrom[start] = start;
-            CostSoFar[start] = 0;
+            CameFrom[StartNode] = StartNode;
+            CostSoFar[StartNode] = 0;
 
             while (priorityQueue.Count > 0)
             {
                 var current = priorityQueue.Dequeue();
 
-                if (current.Equals(end))
+                if (current.Equals(EndNode))
                 {
                     break;
                 }
@@ -195,27 +223,58 @@ namespace Data
                     if (!CostSoFar.ContainsKey(next) || newCost < CostSoFar[next])
                     {
                         CostSoFar[next] = newCost;
-                        double priority = newCost + Heuristic(next.Location, end.Location);
+                        double priority = newCost + Heuristic(next.Location, EndNode.Location);
                         priorityQueue.Enqueue(next, priority);
                         CameFrom[next] = current;
                     }
                 }
             }
         }
-        
-        
+
+
         //-------------------------------------------------------------------------------
         //处理棋盘数据修改
         //-------------------------------------------------------------------------------
 
-        public void SetDataType(Location location,NodeType type)
+        public void SetDataType(Location location, NodeType type)
         {
             if (!IsBound(location))
             {
                 return;
             }
-            
+
             CurrentGridData[location.x][location.y].NodeType = type;
+            if (type == NodeType.Start)
+            {
+                SetStartLocation(location);
+            }
+
+            if (type == NodeType.End)
+            {
+                SetEndLocation(location);
+            }
+        }
+
+        public bool SetStartLocation(Location location)
+        {
+            if (StartLocation != new Location(0, 0))
+            {
+                return false;
+            }
+
+            StartLocation = location;
+            return true;
+        }
+
+        public bool SetEndLocation(Location location)
+        {
+            if (EndLocation != new Location(0, 0))
+            {
+                return false;
+            }
+
+            EndLocation = location;
+            return true;
         }
     }
 }

@@ -18,6 +18,13 @@ namespace Graph
             NodeType = type;
             Cost = cost;
         }
+
+        public AStarNode(AStarNode node)
+        {
+            Location = node.Location;
+            NodeType = node.NodeType;
+            Cost = node.Cost;
+        }
     }
 
     public struct Location
@@ -33,6 +40,26 @@ namespace Graph
         public static Location operator +(Location a, Location b)
         {
             return new Location(a.x + b.x, a.y + b.y);
+        }
+
+        public static bool operator ==(Location a, Location b)
+        {
+            if (a.x == b.x && a.y == b.y)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool operator !=(Location a, Location b)
+        {
+            if (a.x == b.x && a.y == b.y)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 

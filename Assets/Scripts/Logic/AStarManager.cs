@@ -10,6 +10,7 @@ namespace Logic
     {
         [SerializeField] private Transform _root;
         [SerializeField] private Button _findPathBtn;
+
         private void Awake()
         {
             _findPathBtn.onClick.AddListener(PathFinder);
@@ -20,7 +21,8 @@ namespace Logic
 
         private void PathFinder()
         {
-            
+            GridData.Instance.AStarPathFind();
+            StartCoroutine(GridView.Instance.DrawPath());
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Data;
 using Graph;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,8 +10,9 @@ namespace View
     {
         [SerializeField] private Button _btn;
         [SerializeField] private Image _itemImg;
+        [SerializeField] private Text _text;
 
-        private AStarNode _nodeData;
+        private AStarNode _nodeData; //= new AStarNode(new Location(0, 0), NodeType.None, 0);
 
         private void Awake()
         {
@@ -19,14 +21,16 @@ namespace View
 
         public void Init(AStarNode node)
         {
-            _nodeData = node;
+            _nodeData = new AStarNode(node);
         }
 
         private void OnClickItem()
         {
-            _nodeData.NodeType = _nodeData.NodeType == NodeType.Obstacle ? 
-                _nodeData.NodeType = NodeType.Normal : _nodeData.NodeType++;
+            _nodeData.NodeType = _nodeData.NodeType == NodeType.Obstacle
+                ? _nodeData.NodeType = NodeType.Normal
+                : _nodeData.NodeType + 1;
             ChangeItemColor(_nodeData.NodeType);
+            GridData.Instance.SetDataType(_nodeData.Location, _nodeData.NodeType);
         }
 
         private void ChangeItemColor(NodeType type)
@@ -34,18 +38,23 @@ namespace View
             switch (type)
             {
                 case NodeType.Normal:
-                    _itemImg.color=Color.white;
+                    _itemImg.color = Color.white;
                     break;
                 case NodeType.Start:
-                    _itemImg.color= Color.red;
+                    _itemImg.color = Color.red;
                     break;
                 case NodeType.End:
-                    _itemImg.color= Color.green;
+                    _itemImg.color = Color.green;
                     break;
                 case NodeType.Obstacle:
-                    _itemImg.color= Color.black;
+                    _itemImg.color = Color.black;
                     break;
             }
+        }
+
+        public void DrawNode()
+        {
+            _text.text = "0";
         }
     }
 }
